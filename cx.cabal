@@ -16,6 +16,7 @@ cabal-version:       >=1.10
 library
   exposed-modules:
       Game.Chess.Board
+    , Game.Chess.Piece
     , Game.Chess.Types
   -- other-modules:
   -- other-extensions:
