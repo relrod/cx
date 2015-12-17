@@ -31,7 +31,7 @@ data Piece =
 
 data Color = White | Black deriving (Eq, Ord, Show, Enum)
 
-data Cell = Cell Piece Color deriving (Eq, Ord)
+data Cell = Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
 
 instance Show Cell where
   show (Cell None _) = " "
