@@ -27,8 +27,9 @@ parseCell =
 parseRanks :: Parser [Cell]
 parseRanks = do
   ranks <- many1 parseCell `sepBy1` (char '/')   -- [String]
-  let parsedRanks = map (concatMap charToCells) ranks
-  return . concat . intersperse (replicate 8 Empty) $ parsedRanks
+  let parsedRanks = map (concatMap charToCells) (reverse ranks)
+  return $ (concat . intersperse (replicate 8 Empty) $ parsedRanks) ++
+    replicate 8 Empty
 
 parseActiveColor :: Parser Color
 parseActiveColor = do
