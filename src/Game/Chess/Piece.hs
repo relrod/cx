@@ -18,4 +18,7 @@ piecePoints :: Board -> Color -> Int
 piecePoints b c =
   V.sum .
   V.map (pointValue . piece) .
-  V.filter (\cell -> color cell == c) $ board b
+  V.filter (\cell -> isCell cell && color cell == c) $ board b
+  where
+    isCell (Cell _ _) = True
+    isCell _          = False
