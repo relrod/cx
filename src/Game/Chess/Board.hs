@@ -38,7 +38,7 @@ initialBoard =
   where
     generateBackRank c =
       fmap
-      (\p -> Cell p c)
+      (`Cell` c)
       [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     generatePawnRank c = replicate 8 (Cell Pawn c)
     generateEmptyRank = replicate 8 Empty
@@ -60,8 +60,7 @@ prettyPrintBoard cs =
   (" | " ++) .
   intersperse ' ' .
   concat .
-  concat .
-  intersperse ["|\n|"] .
+  intercalate ["|\n|"] .
   reverse .
   map (map show) .
   dropEvery 2 .

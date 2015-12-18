@@ -3,7 +3,7 @@ module Game.Chess.FEN where
 
 import Data.Attoparsec.Text
 import Data.Char (digitToInt, isDigit, isLower, isUpper, toLower)
-import Data.List (elem, intersperse)
+import Data.List (elem, intercalate)
 import Game.Chess.Types
 
 charToCells :: Char -> [Cell]
@@ -26,9 +26,9 @@ parseCell =
 
 parseRanks :: Parser [Cell]
 parseRanks = do
-  ranks <- many1 parseCell `sepBy1` (char '/')   -- [String]
+  ranks <- many1 parseCell `sepBy1` char '/'
   let parsedRanks = map (concatMap charToCells) (reverse ranks)
-  return $ (concat . intersperse (replicate 8 Empty) $ parsedRanks) ++
+  return $ intercalate (replicate 8 Empty) parsedRanks ++
     replicate 8 Empty
 
 parseActiveColor :: Parser Color
