@@ -20,8 +20,7 @@ data Board =
         } deriving (Eq, Ord, Show)
 
 data Piece =
-    None
-  | Pawn
+    Pawn
   | Knight
   | Bishop
   | King
@@ -31,10 +30,10 @@ data Piece =
 
 data Color = White | Black deriving (Eq, Ord, Show, Enum)
 
-data Cell = Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
+data Cell = Empty | Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
 
 instance Show Cell where
-  show (Cell None _) = " "
+  show Empty = " "
   show (Cell Pawn White) = "♙"
   show (Cell Pawn Black) = "♟"
   show (Cell Knight White) = "♘"

@@ -5,7 +5,6 @@ import Game.Chess.Types
 
 -- | Section 3, "Programming a Computer for Playing Chess" By Claude E. Shannon.
 pointValue :: Piece -> Int
-pointValue None = 0
 pointValue King = 0 -- I guess?
 pointValue Pawn = 1
 pointValue Knight = 3

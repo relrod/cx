@@ -40,7 +40,7 @@ initialBoard =
       (\p -> Cell p c)
       [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     generatePawnRank c = replicate 8 (Cell Pawn c)
-    generateEmptyRank = replicate 8 (Cell None White)
+    generateEmptyRank = replicate 8 Empty
     -- This is in order of index, not in actual order.
     generateBoard =
         generateBackRank White ++ generateEmptyRank ++
