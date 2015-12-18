@@ -2,6 +2,7 @@ module Game.Chess.Board where
 
 import Data.Bits
 import Data.List (intersperse)
+import Data.List.Split (chunksOf)
 import Data.Word
 import qualified Data.Vector as V
 import Game.Chess.Types
@@ -52,9 +53,19 @@ initialBoard =
         generatePawnRank Black ++ generateEmptyRank ++
         generateBackRank Black ++ generateEmptyRank
 
-prettyPrintBoard :: [Cell] -> String -> String
-prettyPrintBoard [] acc = init acc
-prettyPrintBoard cs acc =
-  prettyPrintBoard
-    (drop 16 cs) -- Note: 16 because of 0x88 board instead of 8x8.
-    (acc ++ (concat . intersperse " " . map show . take 16 $ cs) ++ "\n")
+-- This is really inefficient for now.
+prettyPrintBoard :: [Cell] -> String
+prettyPrintBoard cs =
+  (++ " |") .
+  (" | " ++) .
+  intersperse ' ' .
+  concat .
+  concat .
+  intersperse ["|\n|"] .
+  reverse .
+  map (map show) .
+  dropEvery 2 .
+  chunksOf 8 $ x
+  where
+    dropEvery _ [] = []
+    dropEvery n xs = take (n-1) xs ++ dropEvery n (drop n xs)
