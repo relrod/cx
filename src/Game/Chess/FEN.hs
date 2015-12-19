@@ -4,6 +4,7 @@ module Game.Chess.FEN where
 import Data.Attoparsec.Text
 import Data.Char (digitToInt, isDigit, isLower, isUpper, toLower)
 import Data.List (elem, intercalate)
+import Data.Maybe (catMaybes)
 import Game.Chess.Types
 
 charToCells :: Char -> [Cell]
@@ -37,3 +38,19 @@ parseActiveColor = do
   if color == 'b'
     then return Black
     else return White
+
+parseCastleAbility :: Parser [CastleAbility]
+parseCastleAbility = do
+  castleLetters <- many1 . choice $ map char "kqKQ-"
+  -- What is the better way to do this?
+  -- This is technically wrong anyway, because we accept things like "KK" and
+  -- "K-" which are clearly nonsensical.
+  return . catMaybes . handleCastleLetter $ castleLetters
+  where
+    handleCastleLetter "-" = []
+    handleCastleLetter xs = map toCastleAbility xs
+    toCastleAbility 'k' = Just $ Kingside Black
+    toCastleAbility 'K' = Just $ Kingside White
+    toCastleAbility 'q' = Just $ Queenside Black
+    toCastleAbility 'Q' = Just $ Queenside White
+    toCastleAbility _   = Nothing

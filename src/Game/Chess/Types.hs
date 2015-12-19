@@ -17,7 +17,13 @@ data Board =
   Board { board :: V.Vector Cell
         , sideToMove :: Color
           -- TODO: Castling ability, and so on.
+        , castleAbility :: [CastleAbility]
         } deriving (Eq, Ord, Show)
+
+data CastleAbility =
+    Kingside Color
+  | Queenside Color
+  deriving (Eq, Ord, Show)
 
 data Piece =
     Pawn

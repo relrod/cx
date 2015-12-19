@@ -35,6 +35,7 @@ initialBoard =
   Board
   (V.fromList generateBoard)
   White
+  [Kingside Black, Kingside White, Queenside Black, Queenside White]
   where
     generateBackRank c =
       fmap
