@@ -5,7 +5,7 @@ import Game.Chess.Types
 
 -- | Section 3, "Programming a Computer for Playing Chess" By Claude E. Shannon.
 pointValue :: Piece -> Int
-pointValue King = 0 -- I guess?
+pointValue King = 200
 pointValue Pawn = 1
 pointValue Knight = 3
 pointValue Bishop = 3
@@ -22,3 +22,31 @@ piecePoints b c =
   where
     isCell (Cell _ _) = True
     isCell _          = False
+
+-- | Given a 'Board', a 'Color', and a 'Piece' to filter for, determine the
+-- current piece-point value for that color\'s pieces.
+--
+-- TODO: Remove duplication with 'piecePoints' above.
+piecePoints' :: Board -> Color -> Piece -> Int
+piecePoints' b c p =
+  V.sum .
+  V.map (pointValue . piece) .
+  V.filter (\cell -> isCell cell && color cell == c && piece cell == p) $
+  board b
+  where
+    isCell (Cell _ _) = True
+    isCell _          = False
+
+-- | Section 3, "Programming a Computer for Playing Chess" By Claude E. Shannon.
+materialScore :: Board -> Int
+materialScore brd =
+  positionalPointValue King +
+  positionalPointValue Queen +
+  positionalPointValue Rook +
+  positionalPointValue Knight +
+  positionalPointValue Bishop +
+  positionalPointValue Pawn
+  where
+    positionalPointValue p =
+      pointValue p * (piecePoints' brd White p -
+                      piecePoints' brd Black p)
