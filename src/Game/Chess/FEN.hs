@@ -24,6 +24,7 @@ charToCells c
 parseCell :: Parser Char
 parseCell =
   choice $ map char "12345678" ++ map char "PNBRQKpnbrqk"
+{-# INLINE parseCell #-}
 
 parseRanks :: Parser [Cell]
 parseRanks = do

@@ -5,18 +5,20 @@ import Game.Chess.Types
 
 -- | Section 3, "Programming a Computer for Playing Chess" By Claude E. Shannon.
 pointValue :: Piece -> Int
-pointValue King = 200
-pointValue Pawn = 1
+pointValue King   = 200
+pointValue Pawn   = 1
 pointValue Knight = 3
 pointValue Bishop = 3
-pointValue Rook = 5
-pointValue Queen = 9
+pointValue Rook   = 5
+pointValue Queen  = 9
+{-# INLINE pointValue #-}
 
 -- | Given a 'Board' and a 'Color', determine the current piece-point value for
 -- that color.
 piecePoints :: Board -> Color -> Int
 piecePoints b c =
   sum . map (piecePoints' b c) $ [King, Queen, Rook, Knight, Bishop, Pawn]
+{-# INLINE piecePoints #-}
 
 -- | Given a 'Board', a 'Color', and a 'Piece' to filter for, determine the
 -- current piece-point value for that color\'s pieces.
