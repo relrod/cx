@@ -16,17 +16,10 @@ pointValue Queen = 9
 -- that color.
 piecePoints :: Board -> Color -> Int
 piecePoints b c =
-  V.sum .
-  V.map (pointValue . piece) .
-  V.filter (\cell -> isCell cell && color cell == c) $ board b
-  where
-    isCell (Cell _ _) = True
-    isCell _          = False
+  sum . map (piecePoints' b c) $ [King, Queen, Rook, Knight, Bishop, Pawn]
 
 -- | Given a 'Board', a 'Color', and a 'Piece' to filter for, determine the
 -- current piece-point value for that color\'s pieces.
---
--- TODO: Remove duplication with 'piecePoints' above.
 piecePoints' :: Board -> Color -> Piece -> Int
 piecePoints' b c p =
   V.sum .
