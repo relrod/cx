@@ -40,12 +40,7 @@ piecePoints' b c p =
 -- | Section 3, "Programming a Computer for Playing Chess" By Claude E. Shannon.
 materialScore :: Board -> Int
 materialScore brd =
-  positionalPointValue King +
-  positionalPointValue Queen +
-  positionalPointValue Rook +
-  positionalPointValue Knight +
-  positionalPointValue Bishop +
-  positionalPointValue Pawn
+  sum . map positionalPointValue $ [King, Queen, Rook, Knight, Bishop, Pawn]
   where
     positionalPointValue p =
       pointValue p * (piecePoints' brd White p -
