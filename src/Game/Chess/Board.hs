@@ -1,7 +1,7 @@
 module Game.Chess.Board where
 
 import Data.Bits
-import Data.List (intersperse)
+import Data.List (intercalate, intersperse)
 import Data.List.Split (chunksOf)
 import Data.Word
 import qualified Data.Vector as V
@@ -64,7 +64,7 @@ prettyPrintBoard cs =
   reverse .
   map (map show) .
   dropEvery 2 .
-  chunksOf 8 $ x
+  chunksOf 8 $ cs
   where
     dropEvery _ [] = []
     dropEvery n xs = take (n-1) xs ++ dropEvery n (drop n xs)
