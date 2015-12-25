@@ -1,10 +1,15 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 -- | A simple FEN parser using attoparsec.
 module Game.Chess.FEN where
 
-import Data.Attoparsec.Text
+import Control.Applicative
+import Data.Attoparsec.Text as Atto
 import Data.Char (digitToInt, isDigit, isLower, isUpper, toLower)
 import Data.List (elem, intercalate)
 import Data.Maybe (catMaybes)
+import qualified Data.Text as T
+import qualified Data.Vector as V
 import Game.Chess.Types
 
 charToCells :: Char -> [Cell]
@@ -42,7 +47,7 @@ parseActiveColor = do
 
 parseCastleAbility :: Parser [CastleAbility]
 parseCastleAbility = do
-  castleLetters <- many1 . choice $ map char "kqKQ-"
+  castleLetters <- many1 . satisfy $ inClass "kqKQ-"
   -- What is the better way to do this?
   -- This is technically wrong anyway, because we accept things like "KK" and
   -- "K-" which are clearly nonsensical.
@@ -55,3 +60,33 @@ parseCastleAbility = do
     toCastleAbility 'q' = Just $ Queenside Black
     toCastleAbility 'Q' = Just $ Queenside White
     toCastleAbility _   = Nothing
+
+-- TODO: Something better than 'Text'.
+-- We ideally want something along the lines of 'Cell'.
+parseEnPassant :: Parser (Maybe T.Text)
+parseEnPassant = do
+  enPassant <- string "-" <|> Atto.take 2
+  if enPassant == "-"
+    then return Nothing
+    else return $ Just enPassant
+
+parseHalfmoves :: Parser Integer
+parseHalfmoves = read <$> many1 digit
+
+parseFullmoves :: Parser Integer
+parseFullmoves = read <$> many1 digit
+
+parseFEN :: Parser Board
+parseFEN = do
+  ranks <- V.fromList <$> parseRanks
+  _ <- char ' '
+  activeColor <- parseActiveColor
+  _ <- char ' '
+  castling <- parseCastleAbility
+  _ <- char ' '
+  enPassant' <- fmap T.unpack <$> parseEnPassant
+  _ <- char ' '
+  halfmoves' <- parseHalfmoves
+  _ <- char ' '
+  fullmoves' <- parseFullmoves
+  return $ Board ranks activeColor castling enPassant' halfmoves' fullmoves'

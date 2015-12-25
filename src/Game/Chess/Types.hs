@@ -18,6 +18,9 @@ data Board =
         , sideToMove :: Color
           -- TODO: Castling ability, and so on.
         , castleAbility :: [CastleAbility]
+        , enPassant :: Maybe String -- TODO: 'String' is bad
+        , halfmoves :: Integer
+        , fullmoves :: Integer
         } deriving (Eq, Ord, Show)
 
 data CastleAbility =
