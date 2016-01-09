@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternSynonyms #-}
 module Game.Chess.Types (
     Board (..)
   , CastleAbility (..)
@@ -6,6 +7,8 @@ module Game.Chess.Types (
   , Cell (..)
   , File
   , Rank
+  , pattern PRank
+  , pattern PFile
   , Position (..)
   , getFile
   , getRank
@@ -62,6 +65,9 @@ newtype File = File { getFile :: Int } deriving (Eq, Ord, Show)
 
 -- | Describes a 'Rank' on the board.
 newtype Rank = Rank { getRank :: Int } deriving (Eq, Ord, Show)
+
+pattern PFile a <- File a
+pattern PRank a <- Rank a
 
 -- | 'Position' allows us to discuss a position on the board, given its
 -- appropriate 'File' and 'Rank'. We define an 'Enum' instance for easily

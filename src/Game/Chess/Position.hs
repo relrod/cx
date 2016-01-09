@@ -6,6 +6,6 @@ import Game.Chess.Types
 -- | Given a position vector in the form (file, rank), add it to a given
 -- 'Position', and return the result so long as we remain in a valid 'Position'.
 movePosition :: (Int, Int) -> Position -> Maybe Position
-movePosition (x, y) (Position f r) =
-  mkPosition (mkFile (getFile f + x)) (mkRank (getRank r + y))
+movePosition (x, y) (Position (PFile f) (PRank r)) =
+  mkPosition (mkFile (f + x)) (mkRank (r + y))
 {-# INLINE movePosition #-}
