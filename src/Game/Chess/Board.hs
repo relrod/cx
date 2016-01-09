@@ -23,8 +23,8 @@ file :: (Num a, Bits a) => a -> a
 file idx = idx .&. 7
 {-# INLINE file #-}
 
-safeBoardIndex :: Board -> Int -> Int -> Maybe Cell
-safeBoardIndex b file rank
+safeBoardIndex :: Board -> Position -> Maybe Cell
+safeBoardIndex b (Position file rank)
   | isOnBoard idx = board b V.!? idx
   | otherwise = Nothing
   where

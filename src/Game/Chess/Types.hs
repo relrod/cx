@@ -41,6 +41,8 @@ data Color = White | Black deriving (Eq, Ord, Show, Enum)
 
 data Cell = Empty | Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
 
+data Position = Position !Int !Int deriving (Eq, Ord, Show)
+
 instance Show Cell where
   show Empty = " "
   show (Cell Pawn White) = "P"
