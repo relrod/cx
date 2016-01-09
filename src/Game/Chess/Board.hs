@@ -28,14 +28,13 @@ emptyCell = flip updateCell Empty
 
 -- | Updates the given 'Position' on the given 'Board' to be the given 'Cell'.
 updateCell :: Position -> Cell -> Board -> Board
-updateCell pos cell brd =
-  brd { board = makeEmpty (board brd) }
+updateCell pos cell brd = brd { board = doUpdate (board brd) }
   where
-    makeEmpty v = V.update v (V.fromList [(fromEnum pos, cell)])
-    {-# INLINE makeEmpty #-}
+    doUpdate v = V.update v (V.fromList [(fromEnum pos, cell)])
+    {-# INLINE doUpdate #-}
 {-# INLINE updateCell #-}
 
--- | An initial 'Board' with all 'Piece's in their normal starting position.
+-- | An initial 'Board' with all 'Piece's in their normal starting position.2
 initialBoard :: Board
 initialBoard =
   Board
