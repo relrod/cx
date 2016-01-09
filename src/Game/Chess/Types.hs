@@ -41,7 +41,17 @@ data Color = White | Black deriving (Eq, Ord, Show, Enum)
 
 data Cell = Empty | Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
 
-data Position = Position !Int !Int deriving (Eq, Ord, Show)
+-- | Describes a 'File' on the board.
+newtype File = File { getFile :: Int } deriving (Eq, Ord, Show)
+
+-- | Describes a 'Rank' on the board.
+newtype Rank = Rank { getRank :: Int } deriving (Eq, Ord, Show)
+
+-- | 'Position' allows us to discuss a position on the board, given its
+-- appropriate 'File' and 'Rank'. We define an 'Enum' instance for easily
+-- converting to and from the 0x88 'V.Vector' position of a 'Board'\'s 'board'
+-- representation.
+data Position = Position !File !Rank deriving (Eq, Ord, Show)
 
 instance Show Cell where
   show Empty = " "
@@ -57,3 +67,10 @@ instance Show Cell where
   show (Cell Queen Black) = "q"
   show (Cell Rook White) = "R"
   show (Cell Rook Black) = "r"
+
+instance Enum Position where
+  fromEnum (Position (File file) (Rank rank)) = rank * 16 + file
+  {-# INLINE fromEnum #-}
+
+  toEnum idx = Position (File (idx .&. 7)) (Rank (idx `shiftR` 4))
+  {-# INLINE toEnum #-}

@@ -11,24 +11,13 @@ isOnBoard :: (Num a, Bits a) => a -> Bool
 isOnBoard a = a .&. 0x88 == 0
 {-# INLINE isOnBoard #-}
 
-index :: Num a => a -> a -> a
-index file rank = rank * 16 + file
-{-# INLINE index #-}
-
-rank :: Bits a => a -> a
-rank idx = idx `shiftR` 4
-{-# INLINE rank #-}
-
-file :: (Num a, Bits a) => a -> a
-file idx = idx .&. 7
-{-# INLINE file #-}
-
 safeBoardIndex :: Board -> Position -> Maybe Cell
-safeBoardIndex b (Position file rank)
+safeBoardIndex b pos
   | isOnBoard idx = board b V.!? idx
   | otherwise = Nothing
   where
-    idx = index file rank
+    idx = fromEnum pos
+    {-# INLINE idx #-}
 
 initialBoard :: Board
 initialBoard =
