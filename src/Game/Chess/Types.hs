@@ -1,4 +1,18 @@
-module Game.Chess.Types where
+module Game.Chess.Types (
+    Board (..)
+  , CastleAbility (..)
+  , Piece (..)
+  , Color (..)
+  , Cell (..)
+  , File
+  , Rank
+  , Position (..)
+
+  -- * Smart constructors
+  , mkFile
+  , mkRank
+  , mkPosition
+) where
 
 import Data.Bits
 import Data.Word
@@ -52,6 +66,26 @@ newtype Rank = Rank { getRank :: Int } deriving (Eq, Ord, Show)
 -- converting to and from the 0x88 'V.Vector' position of a 'Board'\'s 'board'
 -- representation.
 data Position = Position !File !Rank deriving (Eq, Ord, Show)
+
+-- | A smart constructor for 'File' that ensures that the file is between
+-- @0@ and @7@ inclusive.
+mkFile :: Int -> Maybe File
+mkFile f
+  | f >= 0 && f < 7 = Just (File f)
+  | otherwise       = Nothing
+
+-- | A smart constructor for 'Rank' that ensures that the rank is between
+-- @0@ and @7@ inclusive.
+mkRank :: Int -> Maybe Rank
+mkRank r
+  | r >= 0 && r < 7 = Just (Rank r)
+  | otherwise       = Nothing
+
+-- | A helper for constructing 'Position', useful in conjunction with the smart
+-- constructors 'mkFile' and 'mkRank'.
+mkPosition :: Maybe File -> Maybe Rank -> Maybe Position
+mkPosition (Just f) (Just r) = Just (Position f r)
+mkPosition _ _               = Nothing
 
 instance Show Cell where
   show Empty = " "
