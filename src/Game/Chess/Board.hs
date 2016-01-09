@@ -23,13 +23,19 @@ index b pos = board b V.! fromEnum pos
 -- | Changes the given 'Position' on the given 'Board' to contain an 'Empty'
 -- Cell instead of a 'Cell'. Yo dawg.
 emptyCell :: Position -> Board -> Board
-emptyCell pos brd =
-  brd { board = makeEmpty (board brd) }
-  where
-    makeEmpty v = V.update v (V.fromList [(fromEnum pos, Empty)])
-    {-# INLINE makeEmpty #-}
+emptyCell = flip updateCell Empty
 {-# INLINE emptyCell #-}
 
+-- | Updates the given 'Position' on the given 'Board' to be the given 'Cell'.
+updateCell :: Position -> Cell -> Board -> Board
+updateCell pos cell brd =
+  brd { board = makeEmpty (board brd) }
+  where
+    makeEmpty v = V.update v (V.fromList [(fromEnum pos, cell)])
+    {-# INLINE makeEmpty #-}
+{-# INLINE updateCell #-}
+
+-- | An initial 'Board' with all 'Piece's in their normal starting position.
 initialBoard :: Board
 initialBoard =
   Board
