@@ -13,6 +13,17 @@ pointValue Rook   = 5
 pointValue Queen  = 9
 {-# INLINE pointValue #-}
 
+-- | Determines the directions a 'Piece' can move in one step.
+movingVectors :: Piece -> [(Int, Int)]
+movingVectors King   = movingVectors Bishop ++ movingVectors Rook
+movingVectors Pawn   = []
+movingVectors Knight =
+  [(2, 1), (1, 2), (-2, 1), (-1, 2), (2, -1), (1, -2), (-2, -1), (-1, -2)]
+movingVectors Bishop = [(1, 1), (-1, -1), (-1, 1), (1, -1)]
+movingVectors Rook   = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+movingVectors Queen  = movingVectors Bishop ++ movingVectors Rook
+{-# INLINE movingVectors #-}
+
 -- | Given a 'Board' and a 'Color', determine the current piece-point value for
 -- that color.
 piecePoints :: Board -> Color -> Int
