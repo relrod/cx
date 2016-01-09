@@ -1,8 +1,10 @@
 module Game.Chess.Board where
 
+import Control.Monad.ST.Lazy
 import Data.Bits
 import Data.List (intercalate, intersperse)
 import Data.List.Split (chunksOf)
+import Data.STRef.Lazy
 import Data.Word
 import qualified Data.Vector as V
 import Game.Chess.Types
@@ -33,6 +35,16 @@ updateCell pos cell brd = brd { board = doUpdate (board brd) }
     doUpdate v = V.update v (V.fromList [(fromEnum pos, cell)])
     {-# INLINE doUpdate #-}
 {-# INLINE updateCell #-}
+
+-- | Given 'Position's @p1@ and @p2@, replace @p2@\'s 'Cell' with @p1@\'s 'Cell'
+-- and set @p1@\'s 'Cell' to 'Empty'.
+move :: Position -> Position -> Board -> Board
+move p1 p2 brd = runST $ do
+  let cellAtP1 = index brd p1
+  st <- newSTRef brd
+  modifySTRef st (updateCell p2 cellAtP1)
+  modifySTRef st (emptyCell p1)
+  readSTRef st
 
 -- | An initial 'Board' with all 'Piece's in their normal starting position.2
 initialBoard :: Board
