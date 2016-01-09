@@ -40,3 +40,7 @@ materialScore brd =
     positionalPointValue p =
       pointValue p * (piecePoints' brd White p -
                       piecePoints' brd Black p)
+
+-- TODO
+evaluate :: Board -> Int
+evaluate = materialScore
