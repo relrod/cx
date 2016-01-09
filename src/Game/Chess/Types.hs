@@ -7,6 +7,8 @@ module Game.Chess.Types (
   , File
   , Rank
   , Position (..)
+  , getFile
+  , getRank
 
   -- * Smart constructors
   , mkFile

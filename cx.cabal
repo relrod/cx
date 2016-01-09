@@ -18,6 +18,7 @@ library
       Game.Chess.Board
     , Game.Chess.FEN
     , Game.Chess.Piece
+    , Game.Chess.Position
     , Game.Chess.Types
   -- other-modules:
   -- other-extensions:
