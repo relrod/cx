@@ -74,9 +74,12 @@ initialBoard =
         generatePawnRank Black ++ generateEmptyRank ++
         generateBackRank Black ++ generateEmptyRank
 
+prettyPrintBoard :: Board -> String
+prettyPrintBoard brd = prettyPrintCells . V.toList . board $ brd
+
 -- This is really inefficient for now.
-prettyPrintBoard :: [Cell] -> String
-prettyPrintBoard cs =
+prettyPrintCells :: [Cell] -> String
+prettyPrintCells cs =
   (++ " |") .
   (" | " ++) .
   intersperse ' ' .
