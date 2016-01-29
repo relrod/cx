@@ -61,10 +61,10 @@ data Color = White | Black deriving (Eq, Ord, Show, Enum)
 data Cell = Empty | Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
 
 -- | Describes a 'File' on the board.
-newtype File = File { getFile :: Int } deriving (Eq, Ord, Show)
+newtype File = File { getFile :: Int } deriving (Eq, Ord)
 
 -- | Describes a 'Rank' on the board.
-newtype Rank = Rank { getRank :: Int } deriving (Eq, Ord, Show)
+newtype Rank = Rank { getRank :: Int } deriving (Eq, Ord)
 
 pattern PFile a <- File a
 pattern PRank a <- Rank a
@@ -94,6 +94,20 @@ mkRank r
 mkPosition :: Maybe File -> Maybe Rank -> Maybe Position
 mkPosition (Just f) (Just r) = Just (Position f r)
 mkPosition _ _               = Nothing
+
+instance Show File where
+  show (File 0) = "A"
+  show (File 1) = "B"
+  show (File 2) = "C"
+  show (File 3) = "D"
+  show (File 4) = "E"
+  show (File 5) = "F"
+  show (File 6) = "G"
+  show (File 7) = "H"
+  show _        = "?" -- Should never happen, due to use of smart constructors.
+
+instance Show Rank where
+  show (Rank r) = show (r + 1)
 
 instance Show Cell where
   show Empty = " "
