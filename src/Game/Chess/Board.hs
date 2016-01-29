@@ -1,5 +1,6 @@
 module Game.Chess.Board where
 
+import Control.Arrow (first)
 import Control.Monad.ST.Lazy
 import Data.Bits
 import Data.List (intercalate, intersperse)
@@ -35,6 +36,25 @@ updateCell pos cell brd = brd { board = doUpdate (board brd) }
     doUpdate v = V.update v (V.fromList [(fromEnum pos, cell)])
     {-# INLINE doUpdate #-}
 {-# INLINE updateCell #-}
+
+isEmptyCell :: Cell -> Bool
+isEmptyCell Empty = True
+isEmptyCell _     = False
+{-# INLINE isEmptyCell #-}
+
+-- | Get a list of every piece owned by a side, and the position it is at.
+--
+-- This is inefficient right now.
+everyPiece :: Board -> Color -> V.Vector (Position, Cell)
+everyPiece brd c =
+  V.map idxToPosition $
+  V.filter (
+    \(_, cell) -> not (isEmptyCell cell)
+                  && color cell == c) (V.zip indexedBrdVec brdVec)
+  where
+    brdVec = board brd
+    indexedBrdVec = V.fromList [0..V.length brdVec]
+    idxToPosition = first toEnum
 
 -- | Given 'Position's @p1@ and @p2@, replace @p2@\'s 'Cell' with @p1@\'s 'Cell'
 -- and set @p1@\'s 'Cell' to 'Empty'.
