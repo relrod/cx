@@ -2,7 +2,7 @@ module Game.Chess.Position where
 
 import Data.Maybe (catMaybes)
 import qualified Data.Vector as V
-import Game.Chess.Board (index, move)
+import Game.Chess.Board (index, everyPiece, move)
 import Game.Chess.Piece (movingVectors)
 import Game.Chess.Types
 
@@ -23,3 +23,9 @@ generate brd pos =
     doMovePosition vect = do
       newPos <- movePosition vect pos
       return (move pos newPos brd)
+
+-- | Determine possible moves for a given side.
+allMoves :: Color -> Board -> [Board]
+allMoves c brd = piecePositions >>= generate brd
+  where
+    piecePositions = V.toList . V.map fst $ everyPiece brd c
