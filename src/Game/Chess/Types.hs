@@ -79,14 +79,14 @@ data Position = Position !File !Rank deriving (Eq, Ord, Show)
 -- @0@ and @7@ inclusive.
 mkFile :: Int -> Maybe File
 mkFile f
-  | f >= 0 && f < 7 = Just (File f)
+  | f >= 0 && f < 8 = Just (File f)
   | otherwise       = Nothing
 
 -- | A smart constructor for 'Rank' that ensures that the rank is between
 -- @0@ and @7@ inclusive.
 mkRank :: Int -> Maybe Rank
 mkRank r
-  | r >= 0 && r < 7 = Just (Rank r)
+  | r >= 0 && r < 8 = Just (Rank r)
   | otherwise       = Nothing
 
 -- | A helper for constructing 'Position', useful in conjunction with the smart
