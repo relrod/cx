@@ -66,7 +66,7 @@ move p1 p2 brd = runST $ do
   modifySTRef st (emptyCell p1)
   readSTRef st
 
--- | An initial 'Board' with all 'Piece's in their normal starting position.2
+-- | An initial 'Board' with all 'Piece's in their normal starting position.
 initialBoard :: Board
 initialBoard =
   Board

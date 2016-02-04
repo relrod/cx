@@ -35,7 +35,6 @@ import qualified Data.Vector as V
 data Board =
   Board { board :: V.Vector Cell
         , sideToMove :: Color
-          -- TODO: Castling ability, and so on.
         , castleAbility :: [CastleAbility]
         , enPassant :: Maybe String -- TODO: 'String' is bad
         , halfmoves :: Integer
