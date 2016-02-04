@@ -91,8 +91,7 @@ mkRank r
 -- | A helper for constructing 'Position', useful in conjunction with the smart
 -- constructors 'mkFile' and 'mkRank'.
 mkPosition :: Maybe File -> Maybe Rank -> Maybe Position
-mkPosition (Just f) (Just r) = Just (Position f r)
-mkPosition _ _               = Nothing
+mkPosition f r = Position <$> f <*> r
 
 instance Show File where
   show (File 0) = "A"
