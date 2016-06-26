@@ -27,8 +27,7 @@ charToCells c
     cellify 'b' = Cell Bishop
 
 parseCell :: Parser Char
-parseCell =
-  choice $ map char "12345678" ++ map char "PNBRQKpnbrqk"
+parseCell = choice $ map char "12345678" ++ map char "PNBRQKpnbrqk"
 {-# INLINE parseCell #-}
 
 parseRanks :: Parser [Cell]
