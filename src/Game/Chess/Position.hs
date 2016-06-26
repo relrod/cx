@@ -30,3 +30,10 @@ allMoves :: Color -> Board -> [Board]
 allMoves c brd = piecePositions >>= generate brd
   where
     piecePositions = V.toList . V.map fst $ everyPiece brd c
+
+-- | Generate a 'GameTree' by calling 'allMoves' the appropriate number of times
+-- depending on the @depth@.
+movesTree :: Color -> Board -> Int -> GameTree
+movesTree c brd 0 = GameTree brd []
+movesTree c brd depth =
+  GameTree brd (map (\x -> movesTree c x (depth - 1)) (allMoves c brd))

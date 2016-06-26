@@ -12,6 +12,7 @@ module Game.Chess.Types (
   , Position (..)
   , getFile
   , getRank
+  , GameTree (..)
 
   -- * Smart constructors
   , mkFile
@@ -20,8 +21,8 @@ module Game.Chess.Types (
 ) where
 
 import Data.Bits
-import Data.Word
 import qualified Data.Vector as V
+import Data.Word
 
 -- I am torn on using a bitboard (or any piece-centric board representation) as
 -- opposed to a square-centric representation which seems more intuitive to me.
@@ -73,6 +74,13 @@ pattern PRank a <- Rank a
 -- converting to and from the 0x88 'V.Vector' position of a 'Board'\'s 'board'
 -- representation.
 data Position = Position !File !Rank deriving (Eq, Ord, Show)
+
+-- | 'GameTree' represents a tree of game states. Typically it is constructed
+-- around the same time move generation happens.
+data GameTree =
+  GameTree { root :: Board
+           , gameTree :: [GameTree]
+           } deriving (Eq, Ord, Show)
 
 -- | A smart constructor for 'File' that ensures that the file is between
 -- @0@ and @7@ inclusive.
