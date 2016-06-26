@@ -3,7 +3,7 @@ module Game.Chess.Position where
 import Data.Maybe (catMaybes)
 import qualified Data.Vector as V
 import Game.Chess.Board (index, everyPiece, move)
-import Game.Chess.Piece (movingVectors)
+import Game.Chess.Piece (movingVectors')
 import Game.Chess.Types
 
 -- | Given a position vector in the form (file, rank), add it to a given
@@ -18,7 +18,8 @@ generate :: Board -> Position -> [Board]
 generate brd pos =
   case index brd pos of
     Empty -> []
-    Cell piece color -> catMaybes $ fmap doMovePosition (movingVectors piece)
+    Cell piece color ->
+      catMaybes $ fmap doMovePosition (movingVectors' piece color)
   where
     doMovePosition vect = do
       newPos <- movePosition vect pos
