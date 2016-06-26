@@ -17,6 +17,7 @@ library
   exposed-modules:
       Game.Chess.Board
     , Game.Chess.FEN
+    , Game.Chess.Negamax
     , Game.Chess.Piece
     , Game.Chess.Position
     , Game.Chess.Types
