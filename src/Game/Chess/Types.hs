@@ -22,7 +22,6 @@ module Game.Chess.Types (
 
 import Data.Bits
 import qualified Data.Vector as V
-import Data.Word
 
 -- I am torn on using a bitboard (or any piece-centric board representation) as
 -- opposed to a square-centric representation which seems more intuitive to me.
@@ -66,7 +65,10 @@ newtype File = File { getFile :: Int } deriving (Eq, Ord)
 -- | Describes a 'Rank' on the board.
 newtype Rank = Rank { getRank :: Int } deriving (Eq, Ord)
 
+pattern PFile :: Int -> File
 pattern PFile a <- File a
+
+pattern PRank :: Int -> Rank
 pattern PRank a <- Rank a
 
 -- | 'Position' allows us to discuss a position on the board, given its

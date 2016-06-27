@@ -6,7 +6,6 @@ import Data.Bits
 import Data.List (intercalate, intersperse)
 import Data.List.Split (chunksOf)
 import Data.STRef.Lazy
-import Data.Word
 import qualified Data.Vector as V
 import Game.Chess.Types
 

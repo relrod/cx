@@ -6,11 +6,11 @@ module Game.Chess.FEN where
 import Control.Applicative
 import Data.Attoparsec.Text as Atto
 import Data.Char (digitToInt, isDigit, isLower, isUpper, toLower)
-import Data.List (elem, intercalate)
+import Data.List (intercalate)
 import Data.Maybe (catMaybes)
 import qualified Data.Text as T
 import qualified Data.Vector as V
-import Game.Chess.Types
+import Game.Chess.Types hiding (color, enPassant)
 
 charToCells :: Char -> [Cell]
 charToCells c
@@ -19,12 +19,13 @@ charToCells c
   | isUpper c = [cellify (toLower c) White]
   | otherwise = []
   where
-    cellify 'p' = Cell Pawn
-    cellify 'r' = Cell Rook
-    cellify 'n' = Cell Knight
-    cellify 'k' = Cell King
-    cellify 'q' = Cell Queen
-    cellify 'b' = Cell Bishop
+    cellify 'p' c' = Cell Pawn c'
+    cellify 'r' c' = Cell Rook c'
+    cellify 'n' c' = Cell Knight c'
+    cellify 'k' c' = Cell King c'
+    cellify 'q' c' = Cell Queen c'
+    cellify 'b' c' = Cell Bishop c'
+    cellify _ _    = Empty -- To shut up GHC
 
 parseCell :: Parser Char
 parseCell = choice $ map char "12345678" ++ map char "PNBRQKpnbrqk"
