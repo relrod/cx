@@ -32,6 +32,7 @@ import qualified Data.Vector as V
 -- For now, I am using a 0x88 representation, which is still more low-level
 -- than I am used to, but nevertheless, should be simple enough to work with.
 
+-- | 'Board' represents the current state of the game at any given moment.
 data Board =
   Board { board :: V.Vector Cell
         , sideToMove :: Color
@@ -41,11 +42,13 @@ data Board =
         , fullmoves :: Integer
         } deriving (Eq, Ord, Show)
 
+-- | Who can castle and on which side(s)?
 data CastleAbility =
     Kingside Color
   | Queenside Color
   deriving (Eq, Ord, Show)
 
+-- | There are 6 different kinds of chess pieces.
 data Piece =
     Pawn
   | Knight
@@ -55,8 +58,13 @@ data Piece =
   | Rook
   deriving (Eq, Ord, Show, Enum)
 
+-- | Each piece is 'White' or 'Black'.
 data Color = White | Black deriving (Eq, Ord, Show, Enum)
 
+-- | A 'Cell' represents a square on the board. It is either 'Empty' or a 'Cell'
+-- containing a particular 'Piece' which belongs to a 'Color'.
+--
+-- This is isomorphic to 'Maybe' ('Piece', 'Color').
 data Cell = Empty | Cell { piece :: Piece, color :: Color } deriving (Eq, Ord)
 
 -- | Describes a 'File' on the board.
