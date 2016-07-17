@@ -17,6 +17,19 @@ movePosition (x, y) (Position (PFile f) (PRank r)) =
 movePosition _ _ = Nothing
 {-# INLINE movePosition #-}
 
+-- | Can the given move legally be made?
+--
+-- Note that this is *not* a comprehensive check! In particular, it checks only
+-- the following things:
+--
+--   * The moving side cannot capture its own piece.
+--   * (TODO!) The move will not place the moving side in check.
+validateMove :: Position -> Position -> Board -> Bool
+validateMove p1 p2 brd =
+  case index brd p2 of
+    Empty -> True
+    Cell _ c -> c /= (sideToMove brd)
+
 -- | Move generation!
 generate :: Board -> Position -> [Board]
 generate brd pos =
@@ -27,7 +40,9 @@ generate brd pos =
   where
     doMovePosition vect = do
       newPos <- movePosition vect pos
-      return (move pos newPos brd)
+      if validateMove pos newPos brd
+      then return (move pos newPos brd)
+      else Nothing
 
 -- | Determine possible moves for the side to move.
 allMoves :: Board -> [Board]
