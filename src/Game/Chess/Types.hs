@@ -13,6 +13,7 @@ module Game.Chess.Types (
   , getFile
   , getRank
   , GameTree (..)
+  , parsePosition
 
   -- * Smart constructors
   , mkFile
@@ -21,7 +22,9 @@ module Game.Chess.Types (
 ) where
 
 import Data.Bits
+import Data.Char (toUpper)
 import qualified Data.Vector as V
+import Text.Read (readMaybe)
 
 -- I am torn on using a bitboard (or any piece-centric board representation) as
 -- opposed to a square-centric representation which seems more intuitive to me.
@@ -110,6 +113,25 @@ mkRank r
 -- constructors 'mkFile' and 'mkRank'.
 mkPosition :: Maybe File -> Maybe Rank -> Maybe Position
 mkPosition f r = Position <$> f <*> r
+
+-- | A helper to parse positions from a 'String'.
+parsePosition :: String -> Maybe Position
+parsePosition (f:r:[]) =
+  case readMaybe [r] :: Maybe Int of
+    Just rank ->
+      mkPosition (letterToFile (toUpper f) >>= mkFile) (mkRank (rank - 1))
+    Nothing -> Nothing
+  where
+    letterToFile 'A' = Just 0
+    letterToFile 'B' = Just 1
+    letterToFile 'C' = Just 2
+    letterToFile 'D' = Just 3
+    letterToFile 'E' = Just 4
+    letterToFile 'F' = Just 5
+    letterToFile 'G' = Just 6
+    letterToFile 'H' = Just 7
+    letterToFile _ = Nothing
+parsePosition _ = Nothing
 
 instance Show File where
   show (File 0) = "A"
