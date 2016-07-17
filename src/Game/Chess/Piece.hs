@@ -33,6 +33,14 @@ movingVectors' Pawn Black = [(0, -1)]
 movingVectors' p _ = movingVectors p
 {-# INLINE movingVectors' #-}
 
+-- | Can the piece move more than one square?
+multiMovePiece :: Piece -> Bool
+multiMovePiece Rook = True
+multiMovePiece Queen = True
+multiMovePiece Bishop = True
+multiMovePiece _ = False
+{-# INLINE multiMovePiece #-}
+
 -- | Given a 'Board' and a 'Color', determine the current piece-point value for
 -- that color.
 piecePoints :: Board -> Color -> Int
