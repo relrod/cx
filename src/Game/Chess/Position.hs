@@ -103,4 +103,4 @@ movesTree brd depth =
 generateSuggestion :: Board -> Int -> Board
 generateSuggestion brd depth =
   let (GameTree _ brds) = movesTree brd depth
-  in root $ maximumBy (comparing $ negamax depth) brds
+  in root $ maximumBy (comparing $ negamax (depth - 1) (sideToMove brd)) brds

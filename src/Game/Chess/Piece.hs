@@ -71,4 +71,8 @@ materialScore brd =
 
 -- TODO
 evaluate :: Board -> Int
-evaluate = materialScore
+evaluate brd = materialScore brd * whoToMove
+  where
+    whoToMove = if sideToMove brd == Black
+                then (-1)
+                else 1
