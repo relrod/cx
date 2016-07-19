@@ -40,7 +40,14 @@ apVectors vs pos = (\x -> apVector x pos []) <$> vs
 --
 -- This function lets us move up until a move becomes invalid.
 getValidSlidingMoves :: Board -> [Position] -> [Position]
-getValidSlidingMoves brd = takeWhile (flip validateMove brd)
+getValidSlidingMoves brd ps = helper brd ps []
+  where
+    helper _ [] acc = acc
+    helper _ (x:xs) acc =
+      case validateMove x brd of
+        EmptySquare -> helper brd xs (x:acc)
+        Occupied -> acc
+        Take -> x:acc
 
 -- | Given a 'Board', a list of moving vectors, and the 'Position' that we are
 -- currently at, return a list of validated positions to which we can move.
@@ -57,11 +64,14 @@ getValidMoves brd vs pos = apVectors vs pos >>= getValidSlidingMoves brd
 --
 --   * The moving side cannot capture its own piece.
 --   * (TODO!) The move will not place the moving side in check.
-validateMove :: Position -> Board -> Bool
+validateMove :: Position -> Board -> MoveValidity
 validateMove p2 brd =
   case index brd p2 of
-    Empty -> True
-    Cell _ c -> c /= (sideToMove brd)
+    Empty -> EmptySquare
+    Cell _ c ->
+      if c == (sideToMove brd)
+      then Occupied
+      else Take
 
 -- | Move generation!
 generate :: Board -> Position -> [Board]

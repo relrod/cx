@@ -13,6 +13,7 @@ module Game.Chess.Types (
   , getFile
   , getRank
   , GameTree (..)
+  , MoveValidity (..)
   , parsePosition
 
   -- * Smart constructors
@@ -94,6 +95,16 @@ data GameTree =
   GameTree { root :: Board
            , gameTree :: [GameTree]
            } deriving (Eq, Ord, Show)
+
+-- | During move generation, we need a way to describe the validity of moves.
+--
+-- Eventually we will need a @SameSideCheck@ constructor to indicated that the
+-- given move would cause the current side\'s king to be placed in check.
+data MoveValidity =
+    EmptySquare -- ^ We are moving to an empty cell.
+  | Take -- ^ We are moving to a cell that has an opposite-color piece.
+  | Occupied -- ^ We are moving to a cell that has a same-color piece.
+  deriving (Eq, Ord, Show)
 
 -- | A smart constructor for 'File' that ensures that the file is between
 -- @0@ and @7@ inclusive.
