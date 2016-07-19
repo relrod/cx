@@ -98,7 +98,7 @@ data GameTree =
 
 -- | During move generation, we need a way to describe the validity of moves.
 --
--- Eventually we will need a @SameSideCheck@ constructor to indicated that the
+-- Eventually we will need a @SameSideCheck@ constructor to indicate that the
 -- given move would cause the current side\'s king to be placed in check.
 data MoveValidity =
     EmptySquare -- ^ We are moving to an empty cell.
