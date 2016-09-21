@@ -7,11 +7,12 @@ license:             BSD2
 license-file:        LICENSE
 author:              Ricky Elrod
 maintainer:          ricky@elrod.me
--- copyright:
+copyright:           (c) 2016 Ricky ELrod
 category:            Game
 build-type:          Simple
 -- extra-source-files:
 cabal-version:       >=1.10
+tested-with:         GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.2, GHC == 8.0.1
 
 library
   exposed-modules:
