@@ -21,17 +21,19 @@ movePosition _ _ = Nothing
 -- each square recursively in the direction of that vector. Note that here we
 -- don't take into account whether or not the move is actually valid, other than
 -- ensuring that we remain on the board.
-apVector :: (Int, Int) -> Position -> [Position] -> [Position]
-apVector v pos acc =
-  case movePosition v pos of
-    Just newPos -> apVector v newPos (newPos : acc)
-    Nothing -> reverse acc
+apVector :: (Int, Int) -> Position -> [Position]
+apVector v pos = doApVector pos []
+  where
+    doApVector pos' acc =
+      case movePosition v pos' of
+        Just newPos -> doApVector newPos (newPos : acc)
+        Nothing -> reverse acc
 
 -- | Given a list of moving vectors and a position, return a list of lists,
 -- where each inner list contains possible (unvalidated) moves in each possible
 -- direction.
 apVectors :: [(Int, Int)] -> Position -> [[Position]]
-apVectors vs pos = (\x -> apVector x pos []) <$> vs
+apVectors vs pos = (\x -> apVector x pos) <$> vs
 
 -- | Given a 'Board' and a list of unvalidated 'Positions' we might want to move
 -- to, validate each position and see if we can, in fact, move there. In the
