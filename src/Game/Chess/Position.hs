@@ -33,7 +33,7 @@ apVector v pos = doApVector pos []
 -- where each inner list contains possible (unvalidated) moves in each possible
 -- direction.
 apVectors :: [(Int, Int)] -> Position -> [[Position]]
-apVectors vs pos = (\x -> apVector x pos) <$> vs
+apVectors vs pos = (`apVector` pos) <$> vs
 
 -- | Given a 'Board' and a list of unvalidated 'Positions' we might want to move
 -- to, validate each position and see if we can, in fact, move there. In the
@@ -71,7 +71,7 @@ validateMove p2 brd =
   case index brd p2 of
     Empty -> EmptySquare
     Cell _ c ->
-      if c == (sideToMove brd)
+      if c == sideToMove brd
       then Occupied
       else Take
 
@@ -86,7 +86,7 @@ generate brd pos =
       let vectors = movingVectors' piece color
           moves = if multiMovePiece piece
                   then getValidMoves brd vectors pos
-                  else catMaybes $ fmap (flip movePosition pos) vectors
+                  else catMaybes $ fmap (`movePosition` pos) vectors
       in fmap (\m -> move pos m brd) moves
 
 -- | Determine possible moves for the side to move.

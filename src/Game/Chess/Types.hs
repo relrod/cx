@@ -127,7 +127,7 @@ mkPosition f r = Position <$> f <*> r
 
 -- | A helper to parse positions from a 'String'.
 parsePosition :: String -> Maybe Position
-parsePosition (f:r:[]) =
+parsePosition [f, r] =
   case readMaybe [r] :: Maybe Int of
     Just rank ->
       mkPosition (letterToFile (toUpper f) >>= mkFile) (mkRank (rank - 1))

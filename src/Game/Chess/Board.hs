@@ -94,11 +94,11 @@ initialBoard =
         generateBackRank Black ++ generateEmptyRank
 
 prettyPrintBoard :: Board -> String
-prettyPrintBoard brd = prettyPrintCells . V.toList . board $ brd
+prettyPrintBoard = prettyPrintCells . V.toList . board
 
 -- This is really inefficient for now.
 prettyPrintCells :: [Cell] -> String
-prettyPrintCells cs =
+prettyPrintCells =
   (++ " |") .
   (" | " ++) .
   intersperse ' ' .
@@ -107,7 +107,7 @@ prettyPrintCells cs =
   reverse .
   map (map show) .
   dropEvery 2 .
-  chunksOf 8 $ cs
+  chunksOf 8
   where
     dropEvery _ [] = []
     dropEvery n xs = take (n-1) xs ++ dropEvery n (drop n xs)
