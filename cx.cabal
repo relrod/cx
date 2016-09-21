@@ -1,7 +1,7 @@
 name:                cx
 version:             0.1.0.0
 synopsis:            Chess eXperiment
--- description:
+description:         An experimental, slow chess engine.
 homepage:            https://github.com/relrod/cx
 license:             BSD2
 license-file:        LICENSE
