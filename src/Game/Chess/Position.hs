@@ -42,12 +42,12 @@ apVectors vs pos = (`apVector` pos) <$> vs
 --
 -- This function lets us move up until a move becomes invalid.
 getValidSlidingMoves :: Board -> [Position] -> [Position]
-getValidSlidingMoves brd ps = helper brd ps []
+getValidSlidingMoves brd ps = helper ps []
   where
-    helper _ [] acc = acc
-    helper _ (x:xs) acc =
+    helper [] acc = acc
+    helper (x:xs) acc =
       case validateMove x brd of
-        EmptySquare -> helper brd xs (x:acc)
+        EmptySquare -> helper xs (x:acc)
         Occupied -> acc
         Take -> x:acc
 
