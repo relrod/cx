@@ -16,20 +16,23 @@ pointValue Queen  = 9
 -- | Determines the directions a 'Piece' can move in one step.
 -- Does not work for pawns, since their directional vector differs depending on
 -- color. Use "movingVectors'" if you know the color.
-movingVectors :: Piece -> [(Int, Int)]
+movingVectors :: Piece -> [MovingVector Int]
 movingVectors King   = movingVectors Bishop ++ movingVectors Rook
 movingVectors Pawn   = []
 movingVectors Knight =
+  mkMovingVector NormalMove <$>
   [(2, 1), (1, 2), (-2, 1), (-1, 2), (2, -1), (1, -2), (-2, -1), (-1, -2)]
-movingVectors Bishop = [(1, 1), (-1, -1), (-1, 1), (1, -1)]
-movingVectors Rook   = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+movingVectors Bishop =
+  mkMovingVector NormalMove <$> [(1, 1), (-1, -1), (-1, 1), (1, -1)]
+movingVectors Rook   =
+  mkMovingVector NormalMove <$> [(1, 0), (0, 1), (-1, 0), (0, -1)]
 movingVectors Queen  = movingVectors Bishop ++ movingVectors Rook
 {-# INLINE movingVectors #-}
 
 -- | Determines the directions a 'Piece' can go
-movingVectors' :: Piece -> Color -> [(Int, Int)]
-movingVectors' Pawn White = [(0, 1)]
-movingVectors' Pawn Black = [(0, -1)]
+movingVectors' :: Piece -> Color -> [MovingVector Int]
+movingVectors' Pawn White = [NormalMove 0 1]
+movingVectors' Pawn Black = [NormalMove 0 (-1)]
 movingVectors' p _ = movingVectors p
 {-# INLINE movingVectors' #-}
 

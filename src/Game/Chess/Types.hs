@@ -1,7 +1,9 @@
+{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE PatternSynonyms #-}
 module Game.Chess.Types (
     Board (..)
   , CastleAbility (..)
+  , MovingVector (..)
   , Piece (..)
   , Color (..)
   , Cell (..)
@@ -20,6 +22,10 @@ module Game.Chess.Types (
   , mkFile
   , mkRank
   , mkPosition
+
+  -- * Utility functions
+  , mkMovingVector
+  , mkTuple
 ) where
 
 import Data.Bits
@@ -105,6 +111,29 @@ data MoveValidity =
   | Take -- ^ We are moving to a cell that has an opposite-color piece.
   | Occupied -- ^ We are moving to a cell that has a same-color piece.
   deriving (Eq, Ord, Show)
+
+-- | There are certain cases where a moving vector for a piece is more than
+-- just a 2-tuple position vector. The most obvious case is the set of moving
+-- vectors for 'Pawn's. Pawns capture diagonally, so we need a way to denote
+-- \"this vector only applies when capturing.\"
+data MovingVector a =
+    NormalMove a a
+  | CaptureMove a a
+  deriving (Eq, Functor, Ord, Show)
+
+-- | A helper function for converting from regular 2-tuples to 'MovingVector's.
+--
+-- Should be called with something like @'mkMovingVector' (1, 1) 'NormalMove'@.
+mkMovingVector :: (a -> a -> MovingVector a) -> (a, a) -> MovingVector a
+mkMovingVector f (a, b) = f a b
+
+-- | This goes the other way, converting a @'MovingVector' a@ to @(a, a)@.
+--
+-- It is only here until the Position module gets updated to account for the
+-- addition of the 'MovingVector' type. Do not rely on it.
+mkTuple :: MovingVector a -> (a, a)
+mkTuple (NormalMove a b) = (a, b)
+mkTuple (CaptureMove a b) = (a, b)
 
 -- | A smart constructor for 'File' that ensures that the file is between
 -- @0@ and @7@ inclusive.

@@ -95,7 +95,7 @@ generate brd pos =
     Cell piece color ->
       -- If it's a sliding piece, then get all the valid positions. Otherwise,
       -- just apply the list of moving vectors to the position.
-      let vectors = movingVectors' piece color
+      let vectors = mkTuple <$> movingVectors' piece color
           moves = if multiMovePiece piece
                   then getValidMoves brd vectors pos
                   else catMaybes $ fmap (`movePosition` pos) vectors
