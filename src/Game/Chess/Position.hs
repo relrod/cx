@@ -59,12 +59,24 @@ getValidSlidingMoves brd ps = helper ps []
 getValidMoves :: Board -> [(Int, Int)] -> Position -> [Position]
 getValidMoves brd vs pos = apVectors vs pos >>= getValidSlidingMoves brd
 
+-- | Given a 'Board', an origin 'Position', a query 'Position' and a list of
+-- moving vectors, determine whether or not the query 'Position' is currently
+-- under attack.
+--
+-- We generate a list of valid moves, and simply determine if the query position
+-- is one of those moves. Note that this does _NOT_ yet account for pawn-takes.
+--
+-- This can be specialized to test for check.
+isAttacked :: Board -> Position -> Position -> [(Int, Int)] -> Bool
+isAttacked brd origin query vs = any (== query) (getValidMoves brd vs origin)
+
 -- | Can the given move legally be made?
 --
 -- Note that this is *not* a comprehensive check! In particular, it checks only
 -- the following things:
 --
 --   * The moving side cannot capture its own piece.
+--   * (TODO!) A king cannot be captured.
 --   * (TODO!) The move will not place the moving side in check.
 validateMove :: Position -> Board -> MoveValidity
 validateMove p2 brd =
