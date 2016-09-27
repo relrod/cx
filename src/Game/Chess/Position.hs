@@ -97,10 +97,11 @@ validateMove (PawnCaptureMove _ _) p2 brd =
 validateMove (NormalMove _ _) p2 brd =
   case index brd p2 of
     Empty -> EmptySquare
-    Cell _ c -> validateNormalMove c
+    Cell p c -> validateNormalMove p c
   where
-    validateNormalMove color
+    validateNormalMove piece color
       | color == sideToMove brd = Occupied
+      | piece == Pawn = InvalidPawnCapture
       | otherwise = Take
 
 -- | Move generation!
