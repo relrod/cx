@@ -1,3 +1,4 @@
+{-# LANGUAGE ViewPatterns #-}
 module Game.Chess.Position where
 
 import Data.List
@@ -6,7 +7,7 @@ import Data.Ord (comparing)
 import qualified Data.Vector as V
 import Game.Chess.Board (index, everyPiece, move)
 import Game.Chess.Piece (movingVectors', multiMovePiece)
-import Game.Chess.Types hiding (piece, color)
+import Game.Chess.Types hiding (color)
 import Game.Chess.Negamax
 
 -- | Given a position vector in the form (file, rank), add it to a given
@@ -42,21 +43,26 @@ apVectors vs pos = (`apVector` pos) <$> vs
 --
 -- This function lets us move up until a move becomes invalid.
 --
--- The second parameter carries along a @'MovingVector' 'Int'@ which is used for
+-- The third parameter carries along a @'MovingVector' 'Int'@ which is used for
 -- validation later on. Namely, it is used for as a justification for why a
 -- particular position has been reached. This is important because we must
 -- handle pawns differently due to how they capture, although there might be a
 -- cleaner approach.
-getValidSlidingMoves :: Board -> [(MovingVector Int, Position)] -> [Position]
-getValidSlidingMoves brd ps = helper ps []
+getValidSlidingMoves
+  :: Board -- ^ The current game state
+  -> Position -- ^ The originating position
+  -> [(MovingVector Int, Position)] -- ^ A list of unvalidated positions
+  -> [Position] -- ^ A list of validated positions
+getValidSlidingMoves brd pos ps = helper ps []
   where
     helper [] acc = acc
     helper ((mv, x):xs) acc =
-      case validateMove mv x brd of
+      case validateMove brd mv pos x of
         EmptySquare -> helper xs (x:acc)
         Occupied -> acc
         InvalidPawnCapture -> acc
         Take -> x:acc
+        StartFromEmptySquare -> []
 
 -- | Given a 'Board', a list of moving vectors, and the 'Position' that we are
 -- currently at, return a list of validated positions to which we can move.
@@ -64,7 +70,7 @@ getValidSlidingMoves brd ps = helper ps []
 -- This basically just combines all of the above machinery into an easy-to-use
 -- function that we can use in 'generate' below.
 getValidMoves :: Board -> [MovingVector Int] -> Position -> [Position]
-getValidMoves brd vs pos = apVectors vs pos >>= getValidSlidingMoves brd
+getValidMoves brd vs pos = apVectors vs pos >>= getValidSlidingMoves brd pos
 
 -- | Given a 'Board', an origin 'Position', a query 'Position' and a list of
 -- moving vectors, determine whether or not the query 'Position' is currently
@@ -86,21 +92,24 @@ isAttacked brd origin query vs = any (== query) (getValidMoves brd vs origin)
 --   * (TODO!) A king cannot be captured.
 --   * (TODO!) The move will not place the moving side in check.
 validateMove
-  :: MovingVector Int -- ^ The 'MovingVector' that made us go to the 'Position'
+  :: Board -- ^ The current game state
+  -> MovingVector Int -- ^ The 'MovingVector' that made us go to the 'Position'
+  -> Position -- ^ The originating position
   -> Position -- ^ The new 'Position' we would go to
-  -> Board -- ^ The current game state
   -> MoveValidity
-validateMove (PawnCaptureMove _ _) p2 brd =
+validateMove brd _ (index brd -> Empty) _ = StartFromEmptySquare
+validateMove brd (PawnCaptureMove _ _) _ p2 =
   case index brd p2 of
     Empty -> InvalidPawnCapture
     Cell _ c -> if c == sideToMove brd then InvalidPawnCapture else Take
-validateMove (NormalMove _ _) p2 brd =
+validateMove brd (NormalMove _ _) (index brd -> piece1) p2 =
   case index brd p2 of
     Empty -> EmptySquare
     Cell _ c -> validateNormalMove c
   where
     validateNormalMove color
       | color == sideToMove brd = Occupied
+      | piece piece1 == Pawn = InvalidPawnCapture
       | otherwise = Take
 
 -- | Move generation!
@@ -108,11 +117,11 @@ generate :: Board -> Position -> [Board]
 generate brd pos =
   case index brd pos of
     Empty -> []
-    Cell piece color ->
+    Cell piece' color ->
       -- If it's a sliding piece, then get all the valid positions. Otherwise,
       -- just apply the list of moving vectors to the position.
-      let vectors = movingVectors' piece color
-          moves = if multiMovePiece piece
+      let vectors = movingVectors' piece' color
+          moves = if multiMovePiece piece'
                   then getValidMoves brd vectors pos
                   else catMaybes $ fmap (`movePosition` pos) (mkTuple <$> vectors)
       in fmap (\m -> move pos m brd) moves
