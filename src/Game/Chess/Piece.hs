@@ -31,8 +31,10 @@ movingVectors Queen  = movingVectors Bishop ++ movingVectors Rook
 
 -- | Determines the directions a 'Piece' can go
 movingVectors' :: Piece -> Color -> [MovingVector Int]
-movingVectors' Pawn White = [NormalMove 0 1]
-movingVectors' Pawn Black = [NormalMove 0 (-1)]
+movingVectors' Pawn White =
+  [NormalMove 0 1, PawnCaptureMove 1 1, PawnCaptureMove (-1) 1]
+movingVectors' Pawn Black =
+  [NormalMove 0 (-1), PawnCaptureMove 1 (-1), PawnCaptureMove (-1) (-1)]
 movingVectors' p _ = movingVectors p
 {-# INLINE movingVectors' #-}
 
