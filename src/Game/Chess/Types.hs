@@ -26,7 +26,6 @@ module Game.Chess.Types (
   -- * Utility functions
   , mkMovingVector
   , mkTuple
-  , isPawnCaptureMove
 ) where
 
 import Data.Bits
@@ -122,11 +121,6 @@ data MovingVector a =
     NormalMove a a
   | PawnCaptureMove a a
   deriving (Eq, Functor, Ord, Show)
-
--- | A helper function to see if we have a 'PawnCaptureMove' or not.
-isPawnCaptureMove :: MovingVector a -> Bool
-isPawnCaptureMove (PawnCaptureMove _ _) = True
-isPawnCaptureMove _ = False
 
 -- | A helper function for converting from regular 2-tuples to 'MovingVector's.
 --
