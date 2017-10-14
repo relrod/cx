@@ -139,7 +139,6 @@ generate brd pos =
           validations =
             fmap (\(v, newPos) -> (newPos, validateMove brd v pos newPos)) onBoard
       in [x | (x, y) <- validations, moveOkay y]
-      --fmap fst (filter (moveOkay . snd) validations)
     moveOkay EmptySquare = True
     moveOkay Take = True
     moveOkay _ = False
