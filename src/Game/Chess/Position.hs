@@ -119,6 +119,27 @@ validateMove brd (NormalMove _ _) (index brd -> piece1) p2 =
       | piece piece1 == Pawn = InvalidPawnCapture
       | otherwise = Take
 
+-- | Given a current 'Position' and a list of @'Moving Vector' 'Int'@, assume
+-- that the piece is NOT a sliding one and generate the list of valid
+-- 'Position's to which it can move.
+getValidSingleMovePieceMoves
+  :: Board
+  -> Position
+  -> [MovingVector Int]
+  -> [Position]
+getValidSingleMovePieceMoves brd pos vectors =
+  [x | (x, y) <- validations, moveOkay y]
+  where
+    onBoard =
+      catMaybes $ fmap (\v -> case movePosition (mkTuple v) pos of
+                                Nothing -> Nothing
+                                Just newPos -> Just (v, newPos)) vectors
+    validations =
+      fmap (\(v, newPos) -> (newPos, validateMove brd v pos newPos)) onBoard
+    moveOkay EmptySquare = True
+    moveOkay Take = True
+    moveOkay _ = False
+
 -- | Move generation!
 generate :: Board -> Position -> [Board]
 generate brd pos =
@@ -131,23 +152,8 @@ generate brd pos =
       let vectors = movingVectors' piece' color'
           moves = if multiMovePiece piece'
                   then getValidMoves brd vectors pos
-                  else getValidSingleMovePieceMoves vectors
+                  else getValidSingleMovePieceMoves brd pos vectors
       in fmap (\m -> move pos m brd) moves
-  where
-    getValidSingleMovePieceMoves :: [MovingVector Int] -> [Position]
-    getValidSingleMovePieceMoves vectors =
-      -- Get a mapping of vectors to new (unvalidated) positions that are still
-      -- on the board.
-      let onBoard =
-            catMaybes $ fmap (\v -> case movePosition (mkTuple v) pos of
-                                      Nothing -> Nothing
-                                      Just newPos -> Just (v, newPos)) vectors
-          validations =
-            fmap (\(v, newPos) -> (newPos, validateMove brd v pos newPos)) onBoard
-      in [x | (x, y) <- validations, moveOkay y]
-    moveOkay EmptySquare = True
-    moveOkay Take = True
-    moveOkay _ = False
 
 -- | Determine possible moves for the side to move.
 allMoves :: Board -> [Board]
