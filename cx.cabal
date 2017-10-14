@@ -7,7 +7,7 @@ license:             BSD2
 license-file:        LICENSE
 author:              Ricky Elrod
 maintainer:          ricky@elrod.me
-copyright:           (c) 2016 Ricky ELrod
+copyright:           (c) 2017 Ricky ELrod
 category:            Game
 build-type:          Simple
 -- extra-source-files:
