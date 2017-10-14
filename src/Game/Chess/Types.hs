@@ -113,6 +113,7 @@ data MoveValidity =
   | InvalidPawnCapture -- ^ We are a 'Pawn' wanting to capture what we cannot.
   | StartFromEmptySquare -- ^ We tried to move a piece from an empty square.
   | KingCapture -- ^ We tried to capture a king.
+  | WrongColorMove -- ^ We tried to move a piece that is not ours.
   deriving (Eq, Ord, Show)
 
 -- | There are certain cases where a moving vector for a piece is more than

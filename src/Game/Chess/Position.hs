@@ -7,7 +7,7 @@ import Data.Ord (comparing)
 import qualified Data.Vector as V
 import Game.Chess.Board (index, everyPiece, move)
 import Game.Chess.Piece (movingVectors', multiMovePiece)
-import Game.Chess.Types hiding (color)
+import Game.Chess.Types
 import Game.Chess.Negamax
 
 -- | Given a position vector in the form (file, rank), add it to a given
@@ -62,6 +62,7 @@ getValidSlidingMoves brd pos ps = helper ps []
         Occupied -> acc
         InvalidPawnCapture -> acc
         KingCapture -> acc
+        WrongColorMove -> acc
         Take -> x:acc
         StartFromEmptySquare -> []
 
@@ -86,13 +87,14 @@ isAttacked brd origin query vs = any (== query) (getValidMoves brd vs origin)
 
 -- | Can the given move legally be made?
 --
--- Note that this is *not* a comprehensive check! In particular, it checks only
--- the following things:
+-- It checks the following things:
 --
---   * The moving side cannot capture its own piece.
+--   * We are not trying to move from an empty square.
+--   * The moving side cannot capture/land on its own piece.
 --   * (TODO!) The move will not place the moving side in check.
---   * (TODO!) We are not moving a piece that is not ours.
---   * A pawn can only move diagonally if it is capturing.
+--   * We are not capturing a king.
+--   * We are not moving a piece that is not ours.
+--   * A pawn can only move diagonally if it is capturing (legally).
 validateMove
   :: Board -- ^ The current game state
   -> MovingVector Int -- ^ The 'MovingVector' that made us go to the 'Position'
@@ -100,6 +102,8 @@ validateMove
   -> Position -- ^ The new 'Position' we would go to
   -> MoveValidity
 validateMove brd _ (index brd -> Empty) _ = StartFromEmptySquare
+validateMove brd _ (\x -> color (index brd x) == sideToMove brd -> False) _ =
+  WrongColorMove
 validateMove brd (PawnCaptureMove _ _) _ p2 =
   case index brd p2 of
     Empty -> InvalidPawnCapture
@@ -109,9 +113,9 @@ validateMove brd (NormalMove _ _) (index brd -> piece1) p2 =
     Empty -> EmptySquare
     Cell p c -> validateNormalMove p c
   where
-    validateNormalMove piece' color
+    validateNormalMove piece' color'
       | piece' == King = KingCapture
-      | color == sideToMove brd = Occupied
+      | color' == sideToMove brd = Occupied
       | piece piece1 == Pawn = InvalidPawnCapture
       | otherwise = Take
 
@@ -120,11 +124,11 @@ generate :: Board -> Position -> [Board]
 generate brd pos =
   case index brd pos of
     Empty -> []
-    Cell piece' color ->
+    Cell piece' color' ->
       -- If it's a sliding piece, then get all the valid positions. Otherwise,
       -- just apply the list of moving vectors to the position and check they
       -- are valid.
-      let vectors = movingVectors' piece' color
+      let vectors = movingVectors' piece' color'
           moves = if multiMovePiece piece'
                   then getValidMoves brd vectors pos
                   else getValidSingleMovePieceMoves vectors
