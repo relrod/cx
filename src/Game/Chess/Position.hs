@@ -91,6 +91,7 @@ isAttacked brd origin query vs = any (== query) (getValidMoves brd vs origin)
 --   * The moving side cannot capture its own piece.
 --   * (TODO!) A king cannot be captured.
 --   * (TODO!) The move will not place the moving side in check.
+--   * A pawn can only move diagonally if it is capturing.
 validateMove
   :: Board -- ^ The current game state
   -> MovingVector Int -- ^ The 'MovingVector' that made us go to the 'Position'
@@ -119,12 +120,29 @@ generate brd pos =
     Empty -> []
     Cell piece' color ->
       -- If it's a sliding piece, then get all the valid positions. Otherwise,
-      -- just apply the list of moving vectors to the position.
+      -- just apply the list of moving vectors to the position and check they
+      -- are valid.
       let vectors = movingVectors' piece' color
           moves = if multiMovePiece piece'
                   then getValidMoves brd vectors pos
-                  else catMaybes $ fmap (`movePosition` pos) (mkTuple <$> vectors)
+                  else getValidSingleMovePieceMoves vectors
       in fmap (\m -> move pos m brd) moves
+  where
+    getValidSingleMovePieceMoves :: [MovingVector Int] -> [Position]
+    getValidSingleMovePieceMoves vectors =
+      -- Get a mapping of vectors to new (unvalidated) positions that are still
+      -- on the board.
+      let onBoard =
+            catMaybes $ fmap (\v -> case movePosition (mkTuple v) pos of
+                                      Nothing -> Nothing
+                                      Just newPos -> Just (v, newPos)) vectors
+          validations =
+            fmap (\(v, newPos) -> (newPos, validateMove brd v pos newPos)) onBoard
+      in [x | (x, y) <- validations, moveOkay y]
+      --fmap fst (filter (moveOkay . snd) validations)
+    moveOkay EmptySquare = True
+    moveOkay Take = True
+    moveOkay _ = False
 
 -- | Determine possible moves for the side to move.
 allMoves :: Board -> [Board]
