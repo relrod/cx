@@ -112,6 +112,7 @@ data MoveValidity =
   | Occupied -- ^ We are moving to a cell that has a same-color piece.
   | InvalidPawnCapture -- ^ We are a 'Pawn' wanting to capture what we cannot.
   | StartFromEmptySquare -- ^ We tried to move a piece from an empty square.
+  | KingCapture -- ^ We tried to capture a king.
   deriving (Eq, Ord, Show)
 
 -- | There are certain cases where a moving vector for a piece is more than

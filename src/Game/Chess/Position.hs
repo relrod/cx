@@ -61,6 +61,7 @@ getValidSlidingMoves brd pos ps = helper ps []
         EmptySquare -> helper xs (x:acc)
         Occupied -> acc
         InvalidPawnCapture -> acc
+        KingCapture -> acc
         Take -> x:acc
         StartFromEmptySquare -> []
 
@@ -89,8 +90,8 @@ isAttacked brd origin query vs = any (== query) (getValidMoves brd vs origin)
 -- the following things:
 --
 --   * The moving side cannot capture its own piece.
---   * (TODO!) A king cannot be captured.
 --   * (TODO!) The move will not place the moving side in check.
+--   * (TODO!) We are not moving a piece that is not ours.
 --   * A pawn can only move diagonally if it is capturing.
 validateMove
   :: Board -- ^ The current game state
@@ -106,9 +107,10 @@ validateMove brd (PawnCaptureMove _ _) _ p2 =
 validateMove brd (NormalMove _ _) (index brd -> piece1) p2 =
   case index brd p2 of
     Empty -> EmptySquare
-    Cell _ c -> validateNormalMove c
+    Cell p c -> validateNormalMove p c
   where
-    validateNormalMove color
+    validateNormalMove piece' color
+      | piece' == King = KingCapture
       | color == sideToMove brd = Occupied
       | piece piece1 == Pawn = InvalidPawnCapture
       | otherwise = Take
